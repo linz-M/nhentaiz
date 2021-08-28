@@ -131,11 +131,11 @@ app.get("/nhentai/pdf", function(req, res) {
 app.get("/nhentai/search", function(req, res) {
   if(!req.query.title) {
       return res.send({"status": "error", "message": "missing a parameter title "});
-  } else {
+        } else {
   	api.search(req.query.title)
       .then(data => console.log(data)
-      return res.json({data}))
-  });
+      return res.json({data}));
+}
 });
 
 // set the server to listen on port 3000
