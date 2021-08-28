@@ -134,7 +134,7 @@ app.get("/nhentai/search", function(req, res) {
   } else {
   	api.search(req.query.title)
       .then(data => console.log(data)
-      return res.json({data});
+      return res.json({data}))
   });
 });
 
