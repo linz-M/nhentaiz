@@ -52,7 +52,9 @@
         "image-to-pdf": "^1.0.0",
         "nhentai-api-js": "^1.1.4",
         "body-parser": "^1.19.0",
-        "path": "^0.12.7"
+        "path": "^0.12.7",
+        "nhentai-node-api": "^1.1.2",
+        "axios": "^0.21.1"
   },
   "homepage": "https://github.com/Zhirrr/Zhirrr-Api#readme"
 }
