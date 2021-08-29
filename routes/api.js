@@ -395,7 +395,6 @@ router.get('/nhentai/pdf', async (req, res, next) => {
       const diojin = await nhentai.getDoujin(doujin_id);
       let judul = diojin.title;
       return res.sendFile(__path+ `/${judul}.pdf`)
-  }
 });
 
 
