@@ -402,8 +402,7 @@ router.get('/nhentai/search', async (req, res, next) => {
         var keyword = req.query.keyword
         if(!keyword) return res.send({"status": "error", "message": "missing parameter keyword"});
        api.search(keyword)
-      .then(data => console.log(data)
-      return res.json(data));
+      .then(data =>{ res.json(data)});
 });
 
 
