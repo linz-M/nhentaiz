@@ -30,6 +30,12 @@ var request = require('request')
 var topdf = require('image-to-pdf')
 var nhentai = require('nhentai-node-api')
 
+
+var tf = require('@tensorflow/tfjs-node')
+var nsfw = require('nsfwjs')
+
+
+
 var path = require('path');
 var nHentaiAPI = require('nhentai-api-js');
 let api = new nHentaiAPI();
@@ -38,14 +44,7 @@ let api = new nHentaiAPI();
 var { color, bgcolor } = require(__path + '/lib/color.js');
 var { fetchJson } = require(__path + '/lib/fetcher.js')
 var options = require(__path + '/lib/options.js');
-var {
-	Nulis,
-	Vokal,
-	Base,
-	Searchnabi,
-    Gempa,
-    Genshin
-} = require('./../lib');
+
 var cookie = "HSID=A7EDzLn3kae2B1Njb;SSID=AheuwUjMojTWvA5GN;APISID=cgfXh13rQbb4zbLP/AlvlPJ2xBJBsykmS_;SAPISID=m82rJG4AC9nxQ5uG/A1FotfA_gi9pvo91C;__Secure-3PAPISID=m82rJG4AC9nxQ5uG/A1FotfA_gi9pvo91C;VISITOR_INFO1_LIVE=RgZLnZtCoPU;LOGIN_INFO=AFmmF2swRQIhAOXIXsKVou2azuz-kTsCKpbM9szRExAMUD-OwHYiuB6eAiAyPm4Ag3O9rbma7umBK-AG1zoGqyJinh4ia03csp5Nkw:QUQ3MjNmeXJ0UHFRS3dzaTNGRmlWR2FfMDRxa2NRYTFiN3lfTEdOVTc4QUlwbUI4S2dlVngxSG10N3ZqcHZwTHBKano5SkN2dDlPSkhRMUtReE42TkhYeUVWS3kyUE1jY2I1QzA1MDZBaktwd1llWU9lOWE4NWhoZV92aDkxeE9vMTNlcG1uMU9rYjhOaDZWdno2ZzN3TXl5TVNhSjNBRnJaMExrQXpoa2xzRVUteFNWZDI5S0Fn;PREF=app=desktop&f4=4000000&al=id;SID=2wezCMTUkWN3YS1VmS_DXaEU84J0pZIQdemM8Zry-uzWm8y1njBpLTOpxSfN-EaYCRSiDg.;YSC=HCowA1fmvzo;__Secure-3PSID=2wezCMTUkWN3YS1VmS_DXaEU84J0pZIQdemM8Zry-uzWm8y1dajgWzlBh9TgKapGOwuXfA.;SIDCC=AJi4QfFK0ri9fSfMjMQ4tOJNp6vOb9emETXB_nf2S05mvr2jBlmeEvlSsQSzPMuJl_V0wcbL1r8;__Secure-3PSIDCC=AJi4QfGeWHx-c4uTpU1rXCciO1p0s2fJWU07KrkZhWyD1Tqi8LyR-kHuBwHY9mViVYu1fRh2PA";
 
 loghandler = {
@@ -311,55 +310,31 @@ router.get('/remove', (req, res, next) => {
     }
 })
 
-router.get('/nhentai/pdf', async (req, respon, next) => {
-        var code = req.query.code
-        if(!code) return respon.send({"status": "error", "message": "missing parameter code"});
-		let count = 0
-		let ResultPdf = []
-		let doujin = await nhentai.getDoujin(input)
-		let array_page = doujin.pages
-		let title = doujin.titles.pretty
-
-		for (let index = 0; index < array_page.length; index++) {
-			let image_name = './nhentai/' + title + index + '.jpg'
-			await new Promise((resolve) => request(array_page[index]).pipe(fs.createWriteStream(image_name)).on('finish', resolve))
-			console.log(array_page[index])
-			ResultPdf.push(image_name)
-			count++
-		}
-
-		await new Promise((resolve) =>
-			topdf(ResultPdf, 'A4')
-			.pipe(fs.createWriteStream('./nhentai/' + title + '.pdf'))
-			.on('finish', resolve)
-		)
-			let options = {
-				method: 'POST',
-				url: 'https://api.anonfiles.com/upload',
-				formData: {
-					file: fs.createReadStream(`./nhentai/${title}.pdf`),
-				},
-			}
-
-			for (let index = 0; index < array_page.length; index++) {
-				fs.unlink('./nhentai/' + title + index + '.jpg', (err) => {
-					if (err) throw err
-				})
-			}
-			
-			request(options, function(err, res, body) {
-				if (err) console.log(err)
-				fs.unlink(`./nhentai/${title}.pdf`, (err) => {
-					if (err) throw err
-				})
-				return respon.json(body);
-			})
-		}
-	}
-}
-
-
-
+router.get('/nsfw/detection', async (req, res, next) => {
+        var imgurl = req.query.img
+        if(!keyword) return res.send({"status": "error", "message": "missing parameter img"});
+     const pic = await axios.get(imgurl, {
+    responseType: 'arraybuffer',
+  })
+  const model = await nsfw.load()
+  const image = await tf.node.decodeImage(pic.data,3)
+  const predictions = await model.classify(image)
+  image.dispose() 
+  hentong = Math.round((predictions[0].probability * 100) * 100) / 100
+  porno = Math.round((predictions[1].probability * 100) * 100) / 100
+  art = Math.round((predictions[2].probability * 100) * 100) / 100
+  sex = Math.round((predictions[3].probability * 100) * 100) / 100
+  neutral = Math.round((predictions[4].probability * 100) * 100) / 100
+  res.json({
+  status : true,
+  creator : 404 Squad,
+  hentai : `${hentong}`,
+  porn : `${porn}`,
+  art : `${art}`,
+  sexy : `${sex}`,
+  neutral : `${neutral}`
+  })
+  
 router.get('/nhentai/search', async (req, res, next) => {
         var keyword = req.query.keyword
         if(!keyword) return res.send({"status": "error", "message": "missing parameter keyword"});
