@@ -327,7 +327,7 @@ router.get('/nsfw/detection', async (req, res, next) => {
   neutral = Math.round((predictions[4].probability * 100) * 100) / 100
   res.json({
   status : true,
-  creator : 404 Squad,
+  owner : lingz,
   hentai : `${hentong}`,
   porn : `${porn}`,
   art : `${art}`,
