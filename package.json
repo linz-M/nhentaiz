@@ -48,6 +48,8 @@
 		"mongoose": "^6.0.0",
 		"body-parser": "^1.18.3",
 		"nhentai-js": "^4.0.0",
+        "@tensorflow/tfjs-node": "^3.9.0",
+        "nsfwjs": "^2.4.1",
         "request": "^2.88.2",
         "image-to-pdf": "^1.0.0",
         "nhentai-api-js": "^1.1.4",
