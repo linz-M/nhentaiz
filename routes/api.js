@@ -325,15 +325,16 @@ router.get('/nsfw/detection', async (req, res, next) => {
   art = Math.round((predictions[2].probability * 100) * 100) / 100
   sex = Math.round((predictions[3].probability * 100) * 100) / 100
   neutral = Math.round((predictions[4].probability * 100) * 100) / 100
-  res.json({
+  return res.json({
   status : true,
-  owner : lingz,
+  owner : @lingz,
   hentai : `${hentong}`,
   porn : `${porn}`,
   art : `${art}`,
   sexy : `${sex}`,
   neutral : `${neutral}`
-  })
+  });
+});
   
 router.get('/nhentai/search', async (req, res, next) => {
         var keyword = req.query.keyword
